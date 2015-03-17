@@ -80,13 +80,13 @@
             buf = malloc(len);
             amessage__pack(&msg,buf);   
 
-            if (sb = send(sfd,buf,len,0) == -1)
+            if (sb = send(sfd,buf,sizeof buf ,0) == -1)
             {
               fprintf(stderr,"error sending");
               exit(EXIT_FAILURE);
 
             }
-            printf("Number of bytes sent :%d", sb);
+            printf("Number of characters sent :%d\n", sb);
             close(sfd);
 
            

@@ -15,10 +15,9 @@
        {
            struct addrinfo hints;
            struct addrinfo *result, *rp;
-           int sfd, s, j;
-           size_t len;
-           ssize_t nread;
+           int sfd, s, j,sb;
            
+                      
 
            if (argc < 3) {
                fprintf(stderr, "Usage: %s host port msg...\n", argv[0]);
@@ -68,14 +67,14 @@
             void *buf;                     // Buffer to store serialized data
             unsigned len;                  // Length of serialized data
         
-            if (argc != 3 && argc != 4)
+            if (argc != 4 && argc != 5)
               {   // Allow one or two integers
                 fprintf(stderr,"usage: amessage a [b]\n");
                 return 1;
                }
         
             msg.a = atoi(argv[3]);
-            if (argc == 4) { msg.has_b = 1; msg.b = atoi(argv[4]); }
+            if (argc == 5) { msg.has_b = 1; msg.b = atoi(argv[4]); }
             len = amessage__get_packed_size(&msg);
         
             buf = malloc(len);
@@ -87,7 +86,7 @@
               exit(EXIT_FAILURE);
 
             }
-            printf("Number of bytes sent :%d", sb)
+            printf("Number of bytes sent :%d", sb);
             close(sfd);
 
            

@@ -15,7 +15,7 @@
        {
            struct addrinfo hints;
            struct addrinfo *result, *rp;
-           int sfd, s, j,sb;
+           int sfd, s, j,btesent;
            
                       
 
@@ -61,9 +61,31 @@
            }
 
            freeaddrinfo(result);        
+           
+
+            RpbGetServerInfoResp serInfo = RPB_GET_SERVER_INFO_RESP__INIT;
+            void *buf;
+            unsigned len;
+            len = rpb_get_server_info_resp__get_packed_size(&serInfo);
+            buf = malloc(len);
+            rpb_get_server_info_resp__pack(&serInfo, buf);
+
+            if(btesent = send(sfd, buf, sizeof(buf), 0) == -1)
+            {
+                fprintf(stderr," error sending");
+                exit(EXIT_FAILURE);
+            }
+            printf("Number of characters sent %d\n", btesent);
+            close(sfd);            
+            free(buf);
+            exit(EXIT_SUCCESS);
+
+            
 
 
-           AMessage msg = AMESSAGE__INIT; // AMessage
+
+            
+          /* AMessage msg = AMESSAGE__INIT; // AMessage
             void *buf;                     // Buffer to store serialized data
             unsigned len;                  // Length of serialized data
         
@@ -93,5 +115,6 @@
 
            exit(EXIT_SUCCESS);
        }
-
+*/
+}
 

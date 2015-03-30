@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include "amessage.pb-c.h"
+//#include "amessage.pb-c.h"
 #include "riak.pb-c.h"
 
        

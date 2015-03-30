@@ -65,11 +65,19 @@
 
            // RpbGetServerInfoResp serInfo = RPB_GET_SERVER_INFO_RESP__INIT;
 
-            void *buf;
-            unsigned len;
+            void *buf,*buf2;
+            unsigned len,leng;
             RpbSetBucketReq buck = RPB_SET_BUCKET_REQ__INIT;
-            buck.bucket = "test";
-            buck.props = RPB_BUCKET_PROPS__INIT; 
+            RpbBucketProps prop = RPB_BUCKET_PROPS__INIT;
+            leng = rpb_bucket_props__get_packed_size(&prop);
+            buf2 = malloc(leng);
+            rpb_bucket_props__pack(&prop, buf2);
+
+
+
+            buck.bucket.data =strdup("test");
+            buck.bucket.len = strlen(buck.bucket.data);
+            buck.props = buf2;//i think the problem is here 
             len=rpb_set_bucket_req__get_packed_size(&buck);
             buf = malloc(len);
             rpb_set_bucket_req__pack(&buck, buf);
@@ -93,6 +101,7 @@
             printf("Number of characters sent %d\n", btesent);
             close(sfd);            
             free(buf);
+            free(buf2);
             exit(EXIT_SUCCESS);
 
             

@@ -63,10 +63,25 @@
            freeaddrinfo(result);        
            
 
-            RpbGetServerInfoResp serInfo = RPB_GET_SERVER_INFO_RESP__INIT;
+           // RpbGetServerInfoResp serInfo = RPB_GET_SERVER_INFO_RESP__INIT;
+
             void *buf;
             unsigned len;
-            len = rpb_get_server_info_resp__get_packed_size(&serInfo);
+            RpbSetBucketReq buck = RPB_SET_BUCKET_REQ__INIT;
+            buck.bucket = "test";
+            buck.props = RPB_BUCKET_PROPS__INIT; 
+            len=rpb_set_bucket_req__get_packed_size(&buck);
+            buf = malloc(len);
+            rpb_set_bucket_req__pack(&buck, buf);
+
+            if(btesent = send(sfd,buf,sizeof(buf), 0) == -1 )
+            {
+                fprintf(stderr, "error sending");
+                exit(EXIT_FAILURE);
+            }
+
+
+           /* len = rpb_get_server_info_resp__get_packed_size(&serInfo);
             buf = malloc(len);
             rpb_get_server_info_resp__pack(&serInfo, buf);
 
@@ -74,7 +89,7 @@
             {
                 fprintf(stderr," error sending");
                 exit(EXIT_FAILURE);
-            }
+            }*/
             printf("Number of characters sent %d\n", btesent);
             close(sfd);            
             free(buf);

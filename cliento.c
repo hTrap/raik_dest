@@ -7,6 +7,7 @@
 #include <string.h>
 //#include "amessage.pb-c.h"
 #include "riak.pb-c.h"
+#include "riak_kv.pb-c.h"
 
        
 
@@ -15,7 +16,7 @@
        {
            struct addrinfo hints;
            struct addrinfo *result, *rp;
-           int sfd, s, j,btesent;
+           int sfd, s, j,btesent, btesent2;
            
                       
 
@@ -69,24 +70,50 @@
             unsigned len,leng;
             RpbSetBucketReq buck = RPB_SET_BUCKET_REQ__INIT;
             RpbBucketProps prop = RPB_BUCKET_PROPS__INIT;
-            leng = rpb_bucket_props__get_packed_size(&prop);
-            buf2 = malloc(leng);
-            rpb_bucket_props__pack(&prop, buf2);
+            RpbContent cont =  RPB_CONTENT__INIT;
+            RpbPutReq putr =  RPB_PUT_REQ__INIT;
+            
+            //buf2 = malloc(leng);
+            //rpb_bucket_props__pack(&prop, buf2);
 
 
 
             buck.bucket.data =strdup("test");
             buck.bucket.len = strlen(buck.bucket.data);
-            buck.props = buf2;//i think the problem is here 
+            buck.props = &prop;//i think the problem is here 
             len=rpb_set_bucket_req__get_packed_size(&buck);
             buf = malloc(len);
-            rpb_set_bucket_req__pack(&buck, buf);
+
+            cont.value.data =strdup("test content");
+            cont.value.len = strlen(cont.value.data);
+
+            putr.bucket.data = strdup("test");
+            putr.bucket.len = strlen(putr.bucket.data);
+
+            putr.content = &cont;
+            leng = rpb_put_req__get_packed_size(&putr);
+            buf2 = malloc(leng);
+            rpb_put_req__pack(&putr, buf2);
+
+
+
+
+            rpb_set_bucket_req__pack(&buck, buf); 
 
             if(btesent = send(sfd,buf,sizeof(buf), 0) == -1 )
             {
                 fprintf(stderr, "error sending");
                 exit(EXIT_FAILURE);
             }
+
+            if(btesent2 = send(sfd,buf,sizeof(buf2), 0) == -1 )
+             {
+                fprintf(stderr, "error sending");
+                exit(EXIT_FAILURE);
+            }
+
+
+
 
 
            /* len = rpb_get_server_info_resp__get_packed_size(&serInfo);
@@ -98,10 +125,10 @@
                 fprintf(stderr," error sending");
                 exit(EXIT_FAILURE);
             }*/
-            printf("Number of characters sent %d\n", btesent);
+            printf("Number of characters sent %d %d", btesent, btesent2);
             close(sfd);            
-            free(buf);
             free(buf2);
+            free(buf);
             exit(EXIT_SUCCESS);
 
             

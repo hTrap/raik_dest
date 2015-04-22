@@ -72,6 +72,7 @@
             RpbBucketProps prop = RPB_BUCKET_PROPS__INIT;
             RpbContent cont =  RPB_CONTENT__INIT;
             RpbPutReq putr =  RPB_PUT_REQ__INIT;
+            RpbPair keva = RPB_PAIR__INIT;
             
             //buf2 = malloc(leng);
             //rpb_bucket_props__pack(&prop, buf2);
@@ -86,6 +87,14 @@
 
             cont.value.data =strdup("test content");
             cont.value.len = strlen(cont.value.data);
+
+            keva.key.data = strdup("test key");
+            keva.key.len = strlen(keva.key.data);
+
+            keva.value.data = strdup("test key value");
+            keva.value.len = strlen(keva.value.data);
+
+            cont.indexes = &keva;
 
             putr.bucket.data = strdup("test");
             putr.bucket.len = strlen(putr.bucket.data);

@@ -47,6 +47,9 @@
 %token KW_BUCKET
 %token KW_KEY
 %token KW_VALUE
+%token KW_MODE
+%token KW_TYPE
+
 
 
 
@@ -58,12 +61,12 @@ start
             last_driver = *instance = riak_dd_new(configuration);
           }
           '(' riak_options ')' { YYACCEPT; }
-;
+        ;
 
 riak_options
         : riak_option riak_options
-|
-;
+        |
+        ;
 
 riak_option
         : KW_SERVER '(' string ')'
@@ -75,7 +78,11 @@ riak_option
           {
             riak_dd_set_port(last_driver, $3);
           }
-        | KW_BUCKET '(' template_content  
+        | KW_BUCKET '(' template_content  riak_bucket_options ')' 
+          {
+            riak_dd_set_bucket(last_driver, $3);
+          }
+        
         | KW_KEY '(' template_content ')'
           {
             riak_dd_set_key(last_driver, $3);
@@ -83,14 +90,34 @@ riak_option
           
         | KW_VALUE '(' template_content ')'
           {
-            redis_dd_set_value(last_driver, $3);
-            free($3);
+            riak_dd_set_value(last_driver, $3);
           }
         
         | dest_driver_option
         | threaded_dest_driver_option
         | { last_template_options = riak_dd_get_template_options(last_driver); } template_option
         ;
+        
+riak_bucket_option
+        : riak_bucket_option riak_bucket_options
+        |
+        ;
+        
+riak_bucket_options
+        : KW_MODE '(' string ')' 
+          {
+            riak_dd_set_mode(last_driver, $3);
+            free($3);
+          }
+        | KW_TYPE '(' string ')' 
+          {
+          riak_dd_set_type(last_driver, $3);
+          free($3);
+          }
+        ;
+        
+        
+
 
 /* INCLUDE_RULES */
 
